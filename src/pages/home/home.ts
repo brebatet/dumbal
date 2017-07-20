@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
+import { AuthProvider } from '../../providers/auth/auth';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
-  items: FirebaseListObservable<any>;
 
-  constructor(public navCtrl: NavController, db: AngularFireDatabase) {
-    this.items = db.list('/players');
+  constructor(public navCtrl: NavController, public authData: AuthProvider) {
   }
 
-  createNewGame() {
+  logoutUser() {
+    this.authData.logoutUser()
+      .then(authData => { this.navCtrl.setRoot('LoginPage'); });
   }
 
 }
