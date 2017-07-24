@@ -139,7 +139,8 @@ export class ListPage {
       inputs: [
         {
           name: 'score',
-          placeholder: 'Score'
+          placeholder: 'Score',
+          type: 'number'
         }
       ],
       buttons: [
@@ -191,4 +192,9 @@ export class ListPage {
     });
     alert.present();
   }
+
+  // checkboxChecked(itemId, item) {
+  //   item.isChecked = !item.isChecked;
+  //   this.items.update(item.$key, item);
+  // }
 }
