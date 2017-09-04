@@ -170,7 +170,7 @@ export class ListPage {
   }
 
   updateAllRank() {
-    this.items.subscribe(items => {
+    let list = this.items.subscribe(items => {
       let results = _.orderBy(items, ['score'], ['asc']);
       results.forEach((item, index) => {
         if (index - 1 >= 0 && results[index - 1].score == item.score) {
@@ -181,6 +181,7 @@ export class ListPage {
         this.items.update(item.$key, item);
       });
     });
+    list.unsubscribe();
   }
 
   showPlayer(itemId, item) {
@@ -192,9 +193,4 @@ export class ListPage {
     });
     alert.present();
   }
-
-  // checkboxChecked(itemId, item) {
-  //   item.isChecked = !item.isChecked;
-  //   this.items.update(item.$key, item);
-  // }
 }
