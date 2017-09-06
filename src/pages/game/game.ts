@@ -1,21 +1,24 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, ActionSheetController } from 'ionic-angular';
+import { Component, OnInit } from '@angular/core';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import * as _ from 'lodash';
 
+@IonicPage()
 @Component({
-  selector: 'page-list',
-  templateUrl: 'list.html'
+  selector: 'page-game',
+  templateUrl: 'game.html',
 })
-export class ListPage {
-  selectedItem: any;
-  icons: string[];
+export class GamePage implements OnInit {
   items: FirebaseListObservable<any>;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController, db: AngularFireDatabase) {
-    // If we navigated to this page, we will have an item available as a nav param
-    this.selectedItem = navParams.get('item');
-    this.items = db.list('/players');
+  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public db: AngularFireDatabase) {
+  }
+
+  ngOnInit() {
+    this.items = this.db.list('/players');
+  }
+
+  ionViewDidLoad() {
   }
 
   addPlayer() {
@@ -123,7 +126,6 @@ export class ListPage {
             item.rank = 0;
             item.roundPts = '';
             this.items.update(itemId, item);
-            this.updateAllRank();
           }
         }
       ]
@@ -132,7 +134,6 @@ export class ListPage {
   }
 
   addScore(event, itemId, item) {
-    event.stopPropagation();
     let prompt = this.alertCtrl.create({
       title: 'New score',
       message: `Add a new score to ${item.name}`,
@@ -160,7 +161,6 @@ export class ListPage {
               }
               item.score = item.score + Number(data.score);
               this.items.update(itemId, item);
-              this.updateAllRank();
             }
           }
         }
@@ -169,27 +169,46 @@ export class ListPage {
     prompt.present();
   }
 
-  updateAllRank() {
-    let list = this.items.subscribe(items => {
+  refreshRank() {
+    const list = this.items.subscribe(items => {
       let results = _.orderBy(items, ['score'], ['asc']);
       results.forEach((item, index) => {
+        let rank = 0;
         if (index - 1 >= 0 && results[index - 1].score == item.score) {
-          item.rank = results[index - 1].rank;
+          rank = results[index - 1].rank;
         } else {
-          item.rank = index + 1;
+          rank = index + 1;
         }
-        this.items.update(item.$key, item);
+        console.log(item);
+        this.items.update(item.$key, { rank: rank });
       });
     });
     list.unsubscribe();
   }
 
-  showPlayer(itemId, item) {
+  clearAll() {
     let alert = this.alertCtrl.create({
-      title: `${item.name}`,
-      subTitle: `Rank: ${item.rank}, Score: ${item.score}`,
-      message: `Pts: ${item.roundPts}`,
-      buttons: ['Close']
+      title: 'Confirm clear all players',
+      message: `Do you want to clear all players ?`,
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            const list = this.items.subscribe(items => {
+              items.forEach((item, index) => {
+                this.items.update(item.$key, { score: 0, rank: 0, roundPts: '' });
+              });
+            });
+            list.unsubscribe();
+          }
+        }
+      ]
     });
     alert.present();
   }

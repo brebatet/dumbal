@@ -5,9 +5,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { AngularFireAuth } from 'angularfire2/auth';
 
-import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
-
 @Component({
   templateUrl: 'app.html'
 })
@@ -21,20 +18,21 @@ export class MyApp {
   constructor(public platform: Platform, private afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen) {
     const authObserver = this.afAuth.authState.subscribe(user => {
       if (user) {
-        this.rootPage = HomePage;
+        this.rootPage = 'HomePage';
         authObserver.unsubscribe();
       } else {
         this.rootPage = 'LoginPage';
         authObserver.unsubscribe();
       }
     });
-    
+
     this.initializeApp();
 
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Home', component: HomePage },
-      { title: 'Game', component: ListPage }
+      { title: 'Home', component: 'HomePage' },
+      { title: 'Game', component: 'GamePage' },
+      { title: 'Settings', component: 'SettingsPage' }
     ];
 
   }
@@ -49,8 +47,6 @@ export class MyApp {
   }
 
   openPage(page) {
-    // Reset the content nav to have just this page
-    // we wouldn't want the back button to show in this scenario
     this.nav.setRoot(page.component);
   }
 }
