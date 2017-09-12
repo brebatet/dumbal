@@ -1,15 +1,8 @@
 import { Component } from '@angular/core';
-import {
-  IonicPage,
-  NavController,
-  LoadingController,
-  Loading,
-  AlertController
-} from 'ionic-angular';
+import { IonicPage, NavController, LoadingController, Loading, AlertController } from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthProvider } from '../../providers/auth/auth';
 import { EmailValidator } from '../../validators/email';
-import { HomePage } from '../home/home';
 
 @IonicPage()
 @Component({
@@ -37,7 +30,7 @@ export class LoginPage {
     } else {
       this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
         .then(authData => {
-          this.navCtrl.setRoot(HomePage);
+          this.navCtrl.setRoot('HomePage');
         }, error => {
           this.loading.dismiss().then(() => {
             let alert = this.alertCtrl.create({
