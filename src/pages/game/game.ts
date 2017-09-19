@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ISubscription } from "rxjs/Subscription";
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import * as _ from 'lodash';
@@ -8,19 +9,25 @@ import * as _ from 'lodash';
   selector: 'page-game',
   templateUrl: 'game.html',
 })
-export class GamePage implements OnInit {
+export class GamePage implements OnInit, OnDestroy {
   items: FirebaseListObservable<any>;
+  players: any[];
+  sub: ISubscription;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public db: AngularFireDatabase) {
   }
 
   ngOnInit() {
     this.items = this.db.list('/players');
+    this.sub = this.items.subscribe(items => this.players = items);
   }
 
-  ionViewDidLoad() {
+  ngOnDestroy() {
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
   }
-
+  
   addPlayer() {
     let prompt = this.alertCtrl.create({
       title: 'Player Name',
@@ -170,46 +177,22 @@ export class GamePage implements OnInit {
   }
 
   refreshRank() {
-    const list = this.items.subscribe(items => {
-      let results = _.orderBy(items, ['score'], ['asc']);
-      results.forEach((item, index) => {
+    let itemsOrderByRank = _.orderBy(this.players, ['score'], ['asc']);
+    if (itemsOrderByRank && itemsOrderByRank.length) {
+      itemsOrderByRank.forEach((item, index) => {
         let rank = 0;
-        if (index - 1 >= 0 && results[index - 1].score == item.score) {
-          rank = results[index - 1].rank;
+        if (index - 1 >= 0 && itemsOrderByRank[index - 1].score == item.score) {
+          rank = itemsOrderByRank[index - 1].rank;
         } else {
           rank = index + 1;
         }
-        console.log(item);
+        itemsOrderByRank[index].rank = rank;
         this.items.update(item.$key, { rank: rank });
       });
-    });
-    list.unsubscribe();
+    }
   }
 
-  clearAll() {
-    let alert = this.alertCtrl.create({
-      title: 'Confirm clear all players',
-      message: `Do you want to clear all players ?`,
-      buttons: [
-        {
-          text: 'No',
-          role: 'cancel',
-          handler: () => {
-          }
-        },
-        {
-          text: 'Yes',
-          handler: () => {
-            const list = this.items.subscribe(items => {
-              items.forEach((item, index) => {
-                this.items.update(item.$key, { score: 0, rank: 0, roundPts: '' });
-              });
-            });
-            list.unsubscribe();
-          }
-        }
-      ]
-    });
-    alert.present();
+  orderByRank() {
+    this.players = _.orderBy(this.players, ['rank'], ['asc']);
   }
 }

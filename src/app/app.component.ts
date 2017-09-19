@@ -13,12 +13,12 @@ export class MyApp {
 
   rootPage: any;
 
-  pages: Array<{ title: string, component: any }>;
+  pages: Array<{ title: string, component: any, icon: string }>;
 
   constructor(public platform: Platform, private afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen) {
     const authObserver = this.afAuth.authState.subscribe(user => {
       if (user) {
-        this.rootPage = 'HomePage';
+        this.rootPage = 'GamePage';
         authObserver.unsubscribe();
       } else {
         this.rootPage = 'LoginPage';
@@ -30,9 +30,8 @@ export class MyApp {
 
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Home', component: 'HomePage' },
-      { title: 'Game', component: 'GamePage' },
-      { title: 'Settings', component: 'SettingsPage' }
+      { title: 'Game', component: 'GamePage', icon: 'md-game-controller-b' },
+      { title: 'Settings', component: 'SettingsPage', icon: 'md-settings' }
     ];
 
   }

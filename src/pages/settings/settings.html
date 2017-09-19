@@ -7,7 +7,13 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
+  <button ion-button full icon-left color="secondary" (click)="clearAll()">
+    <ion-icon name="md-color-wand"></ion-icon>Clear all players
+  </button>
   <button ion-button full icon-left color="danger" (click)="deleteAll()">
-    <ion-icon name="trash"></ion-icon>Delete all players
+    <ion-icon name="md-trash"></ion-icon>Delete all players
+  </button>
+  <button ion-button full icon-left (click)="logoutUser()">
+    <ion-icon name="md-log-out"></ion-icon>Logout
   </button>
 </ion-content>

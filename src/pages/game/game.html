@@ -13,16 +13,19 @@
 </ion-header>
 <ion-content padding>
   <ion-list>
-    <ion-item-sliding *ngFor="let item of items | async">
-      <ion-item>
+    <ion-item-sliding *ngFor="let item of players">
+      <ion-item text-wrap>
+        <ion-avatar item-start>
+          <p style="font-size: 45px;">{{item.rank}}</p>
+        </ion-avatar>
         <h2>{{item.name}}</h2>
-        <p>Rank: {{item.rank}}, Score: {{item.score}}</p>
+        <p>Score: {{item.score}}</p>
         <p>Pts: {{item.roundPts}}</p>
-        <button ion-button item-right (click)="addScore($event, item.$key, item)" style="padding: 10px"><ion-icon name="add"></ion-icon></button>
+        <button ion-button item-right (click)="addScore($event, item.$key, item)" style="padding: 10px"><ion-icon name="md-add"></ion-icon></button>
       </ion-item>
       <ion-item-options side="left">
         <button ion-button icon-only (click)="updatePlayer(item.$key, item)"><ion-icon name="md-create"></ion-icon></button>
-        <button ion-button icon-only color="danger" (click)="deletePlayer(item.$key, item)"><ion-icon name="trash"></ion-icon></button>
+        <button ion-button icon-only color="danger" (click)="deletePlayer(item.$key, item)"><ion-icon name="md-trash"></ion-icon></button>
       </ion-item-options>
       <ion-item-options side="right">
         <button ion-button (click)="clearScore(item.$key, item)">Clear</button>
@@ -30,9 +33,9 @@
     </ion-item-sliding>
   </ion-list>
   <button ion-button full icon-left (click)="refreshRank()">
-    <ion-icon name="refresh"></ion-icon>Refresh Rank
+    <ion-icon name="md-sync"></ion-icon>Refresh Rank
   </button>
-  <button ion-button full icon-left color="danger" (click)="clearAll()">
-    <ion-icon name="construct"></ion-icon>Clear all players
-  </button>
+  <button ion-button full icon-left (click)="orderByRank()">
+      <ion-icon name="md-reorder"></ion-icon>Order by Rank
+    </button>
 </ion-content>
